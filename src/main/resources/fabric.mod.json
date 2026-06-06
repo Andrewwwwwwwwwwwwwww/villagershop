@@ -3,7 +3,7 @@
   "id": "villagershop",
   "version": "${version}",
   "name": "Villager Shop",
-  "description": "Player-owned villager shops. Run /shop create to spawn an invulnerable shop villager; owners stock trades through a chest GUI and customers buy through the vanilla merchant screen. Server-side.",
+  "description": "Player-owned villager shops, server-side. /shop create spawns an invulnerable shop villager with no breakable block behind it; owners run player-stocked trades through a chest setup GUI (rename, profession, biome variant, glow, rotation, and paged stock/payment screens) while customers buy through the vanilla merchant screen.",
   "authors": ["Andrewwwwwwwwwwwwwww"],
   "license": "All Rights Reserved",
   "environment": "*",
