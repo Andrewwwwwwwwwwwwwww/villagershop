@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "villagershop",
+  "version": "${version}",
+  "name": "Villager Shop",
+  "description": "Player-owned villager shops. Run /shop create to spawn an invulnerable shop villager; owners stock trades through a chest GUI and customers buy through the vanilla merchant screen. Server-side.",
+  "authors": ["Andrewwwwwwwwwwwwwww"],
+  "license": "All Rights Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["io.github.andrewwwwwwwwwwwwwww.villagershop.VillagerShop"]
+  },
+  "contact": {
+    "homepage": "https://github.com/Andrewwwwwwwwwwwwwww/villagershop",
+    "sources": "https://github.com/Andrewwwwwwwwwwwwwww/villagershop",
+    "issues": "https://github.com/Andrewwwwwwwwwwwwwww/villagershop/issues"
+  },
+  "icon": "assets/villagershop/icon.png",
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "fabric-api": ">=0.148.2",
+    "minecraft": "~26.1"
+  }
+}
