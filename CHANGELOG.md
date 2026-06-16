@@ -1,8 +1,8 @@
 # Changelog
 
 ## 0.4.0
-- Updated to **Minecraft 26.2** (Fabric loader 0.19.3, Fabric API 0.152.1+26.2, Loom 1.17.11,
-  Gradle 9.5.1). No gameplay changes.
+- Updated to **Minecraft 26.2** (Fabric loader 0.19.3, Fabric API 0.152.1+26.2; Loom 1.16.2 and
+  Gradle 9.4.0 unchanged). No gameplay changes.
 
 ## 0.3.1
 - Fixed the customer trade screen showing up **blank**: a `MerchantMenu` opened with a custom
