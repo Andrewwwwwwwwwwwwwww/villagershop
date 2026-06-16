@@ -51,7 +51,7 @@ public final class TradeEditMenu extends ChestMenu {
     }
 
     private void decorate() {
-        ItemStack filler = new ItemStack(Items.GRAY_STAINED_GLASS_PANE);
+        ItemStack filler = new ItemStack(Items.STAINED_GLASS_PANE.gray());
         filler.set(DataComponents.CUSTOM_NAME, styled(" ", ChatFormatting.GRAY));
         for (int i = 0; i < CONTAINER_SIZE; i++) {
             if (i == SELL || i == PRICE_A || i == PRICE_B) continue;

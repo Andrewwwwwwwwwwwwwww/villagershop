@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.npc.villager.Villager;
 
 /**
@@ -17,7 +17,7 @@ public final class ShopVillagers {
     private ShopVillagers() {}
 
     public static Villager spawn(ServerLevel level, double x, double y, double z, float yRot, String displayName) {
-        Villager villager = EntityType.VILLAGER.spawn(level, BlockPos.containing(x, y, z), EntitySpawnReason.COMMAND);
+        Villager villager = EntityTypes.VILLAGER.spawn(level, BlockPos.containing(x, y, z), EntitySpawnReason.COMMAND);
         if (villager == null) return null;
         villager.snapTo(x, y, z, yRot, 0.0f);
         villager.setYBodyRot(yRot);
