@@ -68,7 +68,7 @@ public final class ContainerEditMenu extends ChestMenu {
             int idx = base + i;
             display.setItem(i, idx < backing.getContainerSize() ? backing.getItem(idx).copy() : ItemStack.EMPTY);
         }
-        ItemStack filler = button(Items.GRAY_STAINED_GLASS_PANE, " ", List.of());
+        ItemStack filler = button(Items.STAINED_GLASS_PANE.gray(), " ", List.of());
         for (int i = PAGE; i < DISPLAY; i++) display.setItem(i, filler.copy());
 
         display.setItem(BACK, button(Items.ARROW, "Back to Setup", List.of("Return to the shop menu")));

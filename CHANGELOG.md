@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+- Updated to **Minecraft 26.2** (Fabric loader 0.19.3, Fabric API 0.152.1+26.2, Loom 1.17.11,
+  Gradle 9.5.1). No gameplay changes.
+
 ## 0.3.1
 - Fixed the customer trade screen showing up **blank**: a `MerchantMenu` opened with a custom
   merchant doesn't auto-sync its offers, so we now use `Merchant.openTradingScreen(...)` which
