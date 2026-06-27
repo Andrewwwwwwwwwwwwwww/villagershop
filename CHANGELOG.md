@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.0
+- **Stable 1.0.0 release.** No gameplay changes from 0.4.0 — marks the mod stable and aligns it with the
+  unified release across the mod suite.
+- Jar filenames now include the Minecraft version (e.g. `villagershop-1.0.0+mc26.2.jar`).
+- A parallel **MC 26.1.2** build is now published (`villagershop-1.0.0+mc26.1.2.jar`).
+
 ## 0.4.0
 - Updated to **Minecraft 26.2** (Fabric loader 0.19.3, Fabric API 0.152.1+26.2; Loom 1.16.2 and
   Gradle 9.4.0 unchanged). No gameplay changes.
