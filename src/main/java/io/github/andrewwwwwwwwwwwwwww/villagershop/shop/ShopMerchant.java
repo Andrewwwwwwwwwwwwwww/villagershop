@@ -5,10 +5,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
+
+import java.util.OptionalInt;
 
 /**
  * Drives the vanilla merchant trade screen for customers, but backed by a {@link Shop} rather than
@@ -29,9 +32,20 @@ public final class ShopMerchant implements net.minecraft.world.item.trading.Merc
     public static void open(ServerPlayer player, Shop shop) {
         ShopMerchant merchant = new ShopMerchant(shop);
         merchant.setTradingPlayer(player);
-        // openTradingScreen both opens the MerchantMenu AND sends the offers packet to the client;
-        // calling player.openMenu alone leaves the screen blank because offers are never synced.
-        merchant.openTradingScreen(player, Component.literal(shop.displayName()), 1);
+        // We deliberately do NOT use Merchant#openTradingScreen here: it opens a vanilla MerchantMenu,
+        // whose result-slot shift-click path casts the merchant to Entity to play a sound and crashes
+        // for our non-entity merchant (handing over goods without taking payment). ShopMerchantMenu
+        // fixes that. We still replicate openTradingScreen's offer sync, or the screen is blank.
+        OptionalInt id = player.openMenu(new SimpleMenuProvider(
+                (syncId, inv, p) -> new ShopMerchantMenu(syncId, inv, merchant),
+                Component.literal(shop.displayName())));
+        if (id.isPresent()) {
+            MerchantOffers built = merchant.getOffers();
+            if (!built.isEmpty()) {
+                player.sendMerchantOffers(id.getAsInt(), built, 1, merchant.getVillagerXp(),
+                        merchant.showProgressBar(), merchant.canRestock());
+            }
+        }
     }
 
     @Override
