@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1
+- **Fixed a duplication exploit when buying via shift-click.** Vanilla's merchant screen plays a
+  trade sound by casting the merchant to an entity; our shops aren't entities, so shift-clicking the
+  result crashed that path *after* handing over the goods but *before* charging the buyer — the
+  customer kept their payment, the shop's stock and profits were untouched, and the goods were free.
+  Buying now goes through a custom merchant menu that completes the trade correctly on shift-click.
+  (Single-click buying was unaffected.)
+
 ## 1.0.0
 - **Stable 1.0.0 release.** No gameplay changes from 0.4.0 — marks the mod stable and aligns it with the
   unified release across the mod suite.
