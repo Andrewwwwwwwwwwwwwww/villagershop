@@ -70,6 +70,10 @@ public final class ShopMerchant implements net.minecraft.world.item.trading.Merc
 
     @Override
     public void notifyTrade(MerchantOffer offer) {
+        // Vanilla's Villager#notifyTrade is what advances the offer's use count; without this the
+        // offer never reports "out of stock", so maxUses (derived from stock) is never enforced and
+        // a paying customer can buy far beyond the actual stock (goods conjured from nothing).
+        offer.increaseUses();
         int index = offers.indexOf(offer);
         ShopTrade trade = index >= 0 ? shop.validTradeAt(index) : null;
         if (trade != null) {
