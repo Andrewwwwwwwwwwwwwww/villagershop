@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3
+- **Fixed a duplication exploit where a paying customer could buy far past the shop's stock.** The
+  trade's use count was never advanced, so the per-stock trade limit was never enforced — once the
+  real stock ran out, the shop kept handing over goods for as long as the buyer could pay (goods
+  conjured from nothing). Trades now correctly count toward their stock limit and grey out when the
+  stock is actually gone.
+
 ## 1.0.2
 - **Fixed a stock-duplication exploit via the Stock/Payments screen.** Those screens used to show a
   *copy* of the container and write it back when closed. If the owner kept the Stock screen open while
