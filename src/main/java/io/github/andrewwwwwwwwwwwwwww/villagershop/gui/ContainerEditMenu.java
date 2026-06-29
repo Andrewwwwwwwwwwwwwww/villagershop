@@ -7,6 +7,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,13 +22,19 @@ import net.minecraft.world.item.Items;
 import java.util.List;
 
 /**
- * A paged 6-row container view backed by a shop container (stock or collected). The top 45 slots
- * are storage for the current page; the bottom row holds navigation: Back to the setup screen,
- * previous/next page, and a page indicator. Goods bigger than one page spill onto further pages.
+ * A paged 6-row view over a shop container (stock or collected). The top 45 slots are a <b>live</b>
+ * window into the backing container for the current page; the bottom row holds navigation.
+ *
+ * <p>The window reads and writes the backing container DIRECTLY — there is no snapshot copy. This is
+ * deliberate: a customer buying from the shop mutates the very same container, so the owner's open
+ * screen reflects purchases as they happen and can never write a stale snapshot back over them.
+ * (The previous copy-then-save-back design let an owner watching the Stock screen "restore" goods a
+ * customer had just bought, duplicating them.)
  */
 public final class ContainerEditMenu extends ChestMenu {
     private static final int DISPLAY = 54;     // 6 rows
     private static final int PAGE = 45;        // 5 rows of storage
+    private static final int CONTROLS = DISPLAY - PAGE; // bottom navigation row
     private static final int BACK = 45;
     private static final int PREV = 48;
     private static final int INFO = 49;
@@ -36,10 +43,8 @@ public final class ContainerEditMenu extends ChestMenu {
 
     private final ServerPlayer player;
     private final Shop shop;
-    private final SimpleContainer backing;
-    private final SimpleContainer display;
+    private final PagedContainer paged;
     private final int totalPages;
-    private int page;
 
     public static void open(ServerPlayer player, Shop shop, SimpleContainer container, String title) {
         player.openMenu(new SimpleMenuProvider(
@@ -49,41 +54,26 @@ public final class ContainerEditMenu extends ChestMenu {
 
     private ContainerEditMenu(int syncId, Inventory inv, ServerPlayer player, Shop shop,
                               SimpleContainer backing, String title) {
-        super(MenuType.GENERIC_9x6, syncId, inv, new SimpleContainer(DISPLAY), 6);
+        super(MenuType.GENERIC_9x6, syncId, inv, new PagedContainer(backing, PAGE, CONTROLS), 6);
         this.player = player;
         this.shop = shop;
-        this.backing = backing;
-        this.display = (SimpleContainer) getContainer();
+        this.paged = (PagedContainer) getContainer();
         this.totalPages = Math.max(1, (backing.getContainerSize() + PAGE - 1) / PAGE);
-        loadPage();
+        refreshControls();
     }
 
     private boolean isControl(int slot) {
         return slot >= PAGE && slot < DISPLAY;
     }
 
-    private void loadPage() {
-        int base = page * PAGE;
-        for (int i = 0; i < PAGE; i++) {
-            int idx = base + i;
-            display.setItem(i, idx < backing.getContainerSize() ? backing.getItem(idx).copy() : ItemStack.EMPTY);
-        }
+    /** Rewrite the bottom navigation row for the current page. Storage slots come from live backing. */
+    private void refreshControls() {
         ItemStack filler = button(Items.STAINED_GLASS_PANE.gray(), " ", List.of());
-        for (int i = PAGE; i < DISPLAY; i++) display.setItem(i, filler.copy());
-
-        display.setItem(BACK, button(Items.ARROW, "Back to Setup", List.of("Return to the shop menu")));
-        display.setItem(INFO, button(Items.PAPER, "Page " + (page + 1) + " / " + totalPages, List.of()));
-        if (page > 0) display.setItem(PREV, button(Items.SPECTRAL_ARROW, "Previous Page", List.of()));
-        if (page < totalPages - 1) display.setItem(NEXT, button(Items.SPECTRAL_ARROW, "Next Page", List.of()));
-    }
-
-    /** Copy the current page's storage slots back into the backing container. */
-    private void savePage() {
-        int base = page * PAGE;
-        for (int i = 0; i < PAGE; i++) {
-            int idx = base + i;
-            if (idx < backing.getContainerSize()) backing.setItem(idx, display.getItem(i).copy());
-        }
+        for (int i = PAGE; i < DISPLAY; i++) paged.setItem(i, filler.copy());
+        paged.setItem(BACK, button(Items.ARROW, "Back to Setup", List.of("Return to the shop menu")));
+        paged.setItem(INFO, button(Items.PAPER, "Page " + (paged.page + 1) + " / " + totalPages, List.of()));
+        if (paged.page > 0) paged.setItem(PREV, button(Items.SPECTRAL_ARROW, "Previous Page", List.of()));
+        if (paged.page < totalPages - 1) paged.setItem(NEXT, button(Items.SPECTRAL_ARROW, "Next Page", List.of()));
     }
 
     @Override
@@ -91,7 +81,6 @@ public final class ContainerEditMenu extends ChestMenu {
         if (isControl(slotId)) {
             switch (slotId) {
                 case BACK -> {
-                    savePage();
                     VillagerShop.MANAGER.save(shop);
                     ShopSetupMenu.open(player, shop);
                 }
@@ -102,15 +91,13 @@ public final class ContainerEditMenu extends ChestMenu {
             return;
         }
         super.clicked(slotId, button, input, clicker);
-        savePage();
     }
 
     private void changePage(int delta) {
-        int next = page + delta;
+        int next = paged.page + delta;
         if (next < 0 || next >= totalPages) return;
-        savePage();
-        page = next;
-        loadPage();
+        paged.page = next;
+        refreshControls();
         sendAllDataToRemote();
     }
 
@@ -130,13 +117,17 @@ public final class ContainerEditMenu extends ChestMenu {
         }
         if (!moved) return ItemStack.EMPTY;
         if (inSlot.isEmpty()) slot.set(ItemStack.EMPTY); else slot.setChanged();
-        savePage();
         return copy;
     }
 
     @Override
+    public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
+        // Never let a double-click "collect all" scoop up the navigation row.
+        return slot.container != paged || slot.getContainerSlot() < PAGE;
+    }
+
+    @Override
     public void removed(Player player) {
-        savePage();
         super.removed(player);
         VillagerShop.MANAGER.save(shop);
     }
@@ -159,5 +150,91 @@ public final class ContainerEditMenu extends ChestMenu {
 
     private static MutableComponent styled(String text, ChatFormatting color) {
         return Component.literal(text).withStyle(color).withStyle(s -> s.withItalic(false));
+    }
+
+    /**
+     * A 54-slot view: indices {@code [0, PAGE)} map to a page-shifted window of the live backing
+     * container; indices {@code [PAGE, DISPLAY)} are the navigation row (a small private container).
+     * All storage reads/writes go straight to the backing container, so they are always current and
+     * are never overwritten by a stale copy.
+     */
+    private static final class PagedContainer implements Container {
+        private final SimpleContainer backing;
+        private final SimpleContainer controls;
+        private final int pageSize;
+        private int page;
+
+        PagedContainer(SimpleContainer backing, int pageSize, int controlCount) {
+            this.backing = backing;
+            this.pageSize = pageSize;
+            this.controls = new SimpleContainer(controlCount);
+        }
+
+        private int backingIndex(int slot) {
+            return page * pageSize + slot;
+        }
+
+        @Override
+        public int getContainerSize() {
+            return pageSize + controls.getContainerSize();
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return backing.isEmpty() && controls.isEmpty();
+        }
+
+        @Override
+        public ItemStack getItem(int slot) {
+            if (slot < pageSize) {
+                int b = backingIndex(slot);
+                return b < backing.getContainerSize() ? backing.getItem(b) : ItemStack.EMPTY;
+            }
+            return controls.getItem(slot - pageSize);
+        }
+
+        @Override
+        public ItemStack removeItem(int slot, int count) {
+            if (slot < pageSize) {
+                int b = backingIndex(slot);
+                return b < backing.getContainerSize() ? backing.removeItem(b, count) : ItemStack.EMPTY;
+            }
+            return controls.removeItem(slot - pageSize, count);
+        }
+
+        @Override
+        public ItemStack removeItemNoUpdate(int slot) {
+            if (slot < pageSize) {
+                int b = backingIndex(slot);
+                return b < backing.getContainerSize() ? backing.removeItemNoUpdate(b) : ItemStack.EMPTY;
+            }
+            return controls.removeItemNoUpdate(slot - pageSize);
+        }
+
+        @Override
+        public void setItem(int slot, ItemStack stack) {
+            if (slot < pageSize) {
+                int b = backingIndex(slot);
+                if (b < backing.getContainerSize()) backing.setItem(b, stack);
+            } else {
+                controls.setItem(slot - pageSize, stack);
+            }
+        }
+
+        @Override
+        public void setChanged() {
+            backing.setChanged();
+        }
+
+        @Override
+        public boolean stillValid(Player player) {
+            return true;
+        }
+
+        @Override
+        public void clearContent() {
+            // Only the navigation row is "ours" to clear; never wipe the live stock/payments.
+            controls.clearContent();
+        }
     }
 }
