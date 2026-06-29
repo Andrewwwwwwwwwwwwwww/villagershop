@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.2
+- **Fixed a stock-duplication exploit via the Stock/Payments screen.** Those screens used to show a
+  *copy* of the container and write it back when closed. If the owner kept the Stock screen open while
+  a customer bought goods, closing it overwrote the live stock with the stale copy — restoring (and
+  thus duplicating) everything the customer had taken. The screens are now a live window directly onto
+  the real container: purchases show up immediately and can never be reverted by a stale save.
+
 ## 1.0.1
 - **Fixed a duplication exploit when buying via shift-click.** Vanilla's merchant screen plays a
   trade sound by casting the merchant to an entity; our shops aren't entities, so shift-clicking the
