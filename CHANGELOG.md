@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.4
+- **Quieter trade sound.** The post-trade villager sound was played once per trade at full volume, so
+  a bulk shift-click stacked many overlapping sounds into a loud burst. It's now throttled to at most
+  once per tick (a bulk buy makes a single sound) and plays at reduced volume.
+
 ## 1.0.3
 - **Fixed a duplication exploit where a paying customer could buy far past the shop's stock.** The
   trade's use count was never advanced, so the per-stock trade limit was never enforced — once the

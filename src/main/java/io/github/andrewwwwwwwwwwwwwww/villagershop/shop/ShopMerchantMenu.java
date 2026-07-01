@@ -29,6 +29,7 @@ public final class ShopMerchantMenu extends MerchantMenu {
     private static final int INV_END = 39;
 
     private final Merchant merchant;
+    private long lastSoundTick = Long.MIN_VALUE;
 
     public ShopMerchantMenu(int containerId, Inventory inventory, Merchant merchant) {
         super(containerId, inventory, merchant);
@@ -76,11 +77,17 @@ public final class ShopMerchantMenu extends MerchantMenu {
         return clicked;
     }
 
-    /** Vanilla casts the merchant to {@code Entity} for this; play it from the customer instead. */
+    /**
+     * Play the trade sound. Vanilla casts the merchant to {@code Entity} for this; we play it from
+     * the customer instead. Throttled to at most once per tick so a bulk shift-click (many trades in
+     * a single tick) doesn't stack dozens of overlapping villager sounds, and at reduced volume.
+     */
     private void playTradeSound(Player player) {
-        if (!player.level().isClientSide()) {
-            player.level().playSound(null, player.blockPosition(),
-                    merchant.getNotifyTradeSound(), SoundSource.NEUTRAL, 1.0f, 1.0f);
-        }
+        if (player.level().isClientSide()) return;
+        long now = player.level().getGameTime();
+        if (now == lastSoundTick) return;
+        lastSoundTick = now;
+        player.level().playSound(null, player.blockPosition(),
+                merchant.getNotifyTradeSound(), SoundSource.NEUTRAL, 0.5f, 1.0f);
     }
 }
