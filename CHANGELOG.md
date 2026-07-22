@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.5] - 2026-07-21
+### Added
+- **Full localization support.** Every player-facing string — the shop setup menu, the stock and collected-payment containers, the trade editor, and all `/shop` command messages — is now translatable. English is the built-in default; see `TRANSLATING.md`.
+
 ## 1.0.4
 - **Quieter trade sound.** The post-trade villager sound was played once per trade at full volume, so
   a bulk shift-click stacked many overlapping sounds into a loud burst. It's now throttled to at most

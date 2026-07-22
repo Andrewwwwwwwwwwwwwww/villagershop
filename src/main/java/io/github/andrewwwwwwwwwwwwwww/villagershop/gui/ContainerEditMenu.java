@@ -2,6 +2,7 @@ package io.github.andrewwwwwwwwwwwwwww.villagershop.gui;
 
 import io.github.andrewwwwwwwwwwwwwww.villagershop.VillagerShop;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.shop.Shop;
+import io.github.andrewwwwwwwwwwwwwww.villagershop.text.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -70,10 +71,16 @@ public final class ContainerEditMenu extends ChestMenu {
     private void refreshControls() {
         ItemStack filler = button(Items.STAINED_GLASS_PANE.gray(), " ", List.of());
         for (int i = PAGE; i < DISPLAY; i++) paged.setItem(i, filler.copy());
-        paged.setItem(BACK, button(Items.ARROW, "Back to Setup", List.of("Return to the shop menu")));
-        paged.setItem(INFO, button(Items.PAPER, "Page " + (paged.page + 1) + " / " + totalPages, List.of()));
-        if (paged.page > 0) paged.setItem(PREV, button(Items.SPECTRAL_ARROW, "Previous Page", List.of()));
-        if (paged.page < totalPages - 1) paged.setItem(NEXT, button(Items.SPECTRAL_ARROW, "Next Page", List.of()));
+        paged.setItem(BACK, button(Items.ARROW, t("villagershop.container.back", "Back to Setup"),
+                List.of(t("villagershop.container.back.desc", "Return to the shop menu"))));
+        paged.setItem(INFO, button(Items.PAPER,
+                t("villagershop.container.page", "Page %d / %d", paged.page + 1, totalPages), List.of()));
+        if (paged.page > 0) paged.setItem(PREV, button(Items.SPECTRAL_ARROW, t("villagershop.container.prev", "Previous Page"), List.of()));
+        if (paged.page < totalPages - 1) paged.setItem(NEXT, button(Items.SPECTRAL_ARROW, t("villagershop.container.next", "Next Page"), List.of()));
+    }
+
+    private String t(String key, String fallback, Object... args) {
+        return Lang.tr(player, key, fallback, args);
     }
 
     @Override

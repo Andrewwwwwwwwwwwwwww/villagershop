@@ -6,6 +6,7 @@ import io.github.andrewwwwwwwwwwwwwww.villagershop.VillagerShop;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.entity.ShopVillagers;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.shop.Shop;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.shop.ShopActions;
+import io.github.andrewwwwwwwwwwwwwww.villagershop.text.Lang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -45,14 +46,14 @@ public final class ShopCommands {
     private static int create(CommandSourceStack source) {
         ServerPlayer sp = requirePlayer(source);
         if (sp == null) {
-            source.sendFailure(Component.literal("This command must be run by a player."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.player_only", "This command must be run by a player.")));
             return 0;
         }
         if (!VillagerShop.isOp(sp)) {
             int owned = VillagerShop.MANAGER.countByOwner(sp.getUUID());
             int cap = VillagerShop.CONFIG.maxShopsPerPlayer;
             if (owned >= cap) {
-                source.sendFailure(Component.literal("You already own the maximum of " + cap + " shop(s)."));
+                source.sendFailure(Component.literal(Lang.tr(sp, cap == 1 ? "villagershop.cmd.max_shops_one" : "villagershop.cmd.max_shops_many", cap == 1 ? "You already own the maximum of %d shop." : "You already own the maximum of %d shops.", cap)));
                 return 0;
             }
         }
@@ -64,7 +65,7 @@ public final class ShopCommands {
 
         Villager villager = ShopVillagers.spawn(level, pos.x, pos.y, pos.z, yaw, ownerName + "'s Shop");
         if (villager == null) {
-            source.sendFailure(Component.literal("Failed to spawn the shop villager."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.spawn_failed", "Failed to spawn the shop villager.")));
             return 0;
         }
 
@@ -75,7 +76,7 @@ public final class ShopCommands {
         shop.z = (int) Math.floor(pos.z);
         VillagerShop.MANAGER.save(shop);
 
-        source.sendSuccess(() -> Component.literal("Shop created! Right-click it to set up trades.")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.created", "Shop created! Right-click it to set up trades."))
                 .withStyle(ChatFormatting.GREEN), false);
         return 1;
     }
@@ -83,16 +84,16 @@ public final class ShopCommands {
     private static int remove(CommandSourceStack source) {
         ServerPlayer sp = requirePlayer(source);
         if (sp == null) {
-            source.sendFailure(Component.literal("This command must be run by a player."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.player_only", "This command must be run by a player.")));
             return 0;
         }
         Shop shop = ShopActions.findNearbyManageable(sp, REMOVE_RANGE, VillagerShop.isOp(sp));
         if (shop == null) {
-            source.sendFailure(Component.literal("Stand near a shop you own and try again."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.near_own", "Stand near a shop you own and try again.")));
             return 0;
         }
         ShopActions.removeShop(sp, shop);
-        source.sendSuccess(() -> Component.literal("Shop removed; items returned to you.")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.removed", "Shop removed; items returned to you."))
                 .withStyle(ChatFormatting.YELLOW), false);
         return 1;
     }
@@ -100,12 +101,12 @@ public final class ShopCommands {
     private static int rename(CommandSourceStack source, String name) {
         ServerPlayer sp = requirePlayer(source);
         if (sp == null) {
-            source.sendFailure(Component.literal("This command must be run by a player."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.player_only", "This command must be run by a player.")));
             return 0;
         }
         Shop shop = ShopActions.findNearbyManageable(sp, REMOVE_RANGE, VillagerShop.isOp(sp));
         if (shop == null) {
-            source.sendFailure(Component.literal("Stand near a shop you own and try again."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.near_own", "Stand near a shop you own and try again.")));
             return 0;
         }
         shop.name = name;
@@ -115,23 +116,24 @@ public final class ShopCommands {
             villager.setCustomNameVisible(true);
         }
         VillagerShop.MANAGER.save(shop);
-        source.sendSuccess(() -> Component.literal("Shop renamed to \"" + name + "\".")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.renamed", "Shop renamed to \"%s\".", name))
                 .withStyle(ChatFormatting.GREEN), false);
         return 1;
     }
 
     private static int adminList(CommandSourceStack source) {
+        ServerPlayer sp = requirePlayer(source);
         var shops = VillagerShop.MANAGER.all();
         if (shops.isEmpty()) {
-            source.sendSuccess(() -> Component.literal("There are no shops.").withStyle(ChatFormatting.GRAY), false);
+            source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.none_all", "There are no shops.")).withStyle(ChatFormatting.GRAY), false);
             return 1;
         }
-        source.sendSuccess(() -> Component.literal("All shops (" + shops.size() + "):")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.all_header", "All shops (%d):", shops.size()))
                 .withStyle(ChatFormatting.AQUA), false);
         for (Shop shop : shops) {
-            source.sendSuccess(() -> Component.literal(
-                    " • " + shop.displayName() + " [" + shop.ownerName + "] — "
-                            + shop.x + ", " + shop.y + ", " + shop.z + " (" + shop.dimension + ")")
+            source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.all_entry",
+                    " • %s [%s] — %d, %d, %d (%s)",
+                    shop.displayName(), shop.ownerName, shop.x, shop.y, shop.z, shop.dimension))
                     .withStyle(ChatFormatting.GRAY), false);
         }
         return 1;
@@ -140,16 +142,16 @@ public final class ShopCommands {
     private static int adminRemove(CommandSourceStack source) {
         ServerPlayer sp = requirePlayer(source);
         if (sp == null) {
-            source.sendFailure(Component.literal("This command must be run by a player."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.player_only", "This command must be run by a player.")));
             return 0;
         }
         Shop shop = ShopActions.findNearbyManageable(sp, REMOVE_RANGE, true);
         if (shop == null) {
-            source.sendFailure(Component.literal("Stand near any shop and try again."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.near_any", "Stand near any shop and try again.")));
             return 0;
         }
         ShopActions.removeShop(sp, shop);
-        source.sendSuccess(() -> Component.literal("Shop removed (items given to you).")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.removed_admin", "Shop removed (items given to you)."))
                 .withStyle(ChatFormatting.YELLOW), false);
         return 1;
     }
@@ -157,20 +159,20 @@ public final class ShopCommands {
     private static int list(CommandSourceStack source) {
         ServerPlayer sp = requirePlayer(source);
         if (sp == null) {
-            source.sendFailure(Component.literal("This command must be run by a player."));
+            source.sendFailure(Component.literal(Lang.tr(sp, "villagershop.cmd.player_only", "This command must be run by a player.")));
             return 0;
         }
         List<Shop> shops = VillagerShop.MANAGER.byOwner(sp.getUUID());
         if (shops.isEmpty()) {
-            source.sendSuccess(() -> Component.literal("You have no shops.").withStyle(ChatFormatting.GRAY), false);
+            source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.none_own", "You have no shops.")).withStyle(ChatFormatting.GRAY), false);
             return 1;
         }
-        source.sendSuccess(() -> Component.literal("Your shops (" + shops.size() + "):")
+        source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.own_header", "Your shops (%d):", shops.size()))
                 .withStyle(ChatFormatting.AQUA), false);
         for (Shop shop : shops) {
-            source.sendSuccess(() -> Component.literal(
-                    " • " + shop.displayName() + " — " + shop.x + ", " + shop.y + ", " + shop.z
-                            + " (" + shop.dimension + "), " + shop.trades.size() + " trade(s)")
+            source.sendSuccess(() -> Component.literal(Lang.tr(sp, "villagershop.cmd.own_entry",
+                    " • %s — %d, %d, %d (%s), %d trade(s)",
+                    shop.displayName(), shop.x, shop.y, shop.z, shop.dimension, shop.trades.size()))
                     .withStyle(ChatFormatting.GRAY), false);
         }
         return 1;

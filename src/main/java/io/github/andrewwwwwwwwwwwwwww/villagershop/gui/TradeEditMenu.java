@@ -2,6 +2,7 @@ package io.github.andrewwwwwwwwwwwwwww.villagershop.gui;
 
 import io.github.andrewwwwwwwwwwwwwww.villagershop.VillagerShop;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.shop.Shop;
+import io.github.andrewwwwwwwwwwwwwww.villagershop.text.Lang;
 import io.github.andrewwwwwwwwwwwwwww.villagershop.shop.ShopTrade;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -36,10 +37,14 @@ public final class TradeEditMenu extends ChestMenu {
     private final SimpleContainer container;
     private boolean handedOff = false; // true once items were intentionally returned (skip return on close)
 
+    private String t(String key, String fallback, Object... args) {
+        return Lang.tr(player, key, fallback, args);
+    }
+
     public static void open(ServerPlayer player, Shop shop) {
         player.openMenu(new SimpleMenuProvider(
                 (syncId, inv, p) -> new TradeEditMenu(syncId, inv, (ServerPlayer) p, shop),
-                Component.literal("New Trade")));
+                Component.literal(Lang.tr(player, "villagershop.trade.new", "New Trade"))));
     }
 
     private TradeEditMenu(int syncId, Inventory inv, ServerPlayer player, Shop shop) {
@@ -88,7 +93,7 @@ public final class TradeEditMenu extends ChestMenu {
         ItemStack priceA = container.getItem(PRICE_A);
         ItemStack priceB = container.getItem(PRICE_B);
         if (sell.isEmpty() || priceA.isEmpty()) {
-            player.sendSystemMessage(styled("Place an item to sell and at least one price item.", ChatFormatting.RED));
+            player.sendSystemMessage(styled(t("villagershop.trade.need_items", "Place an item to sell and at least one price item."), ChatFormatting.RED));
             return;
         }
         shop.trades.add(new ShopTrade(sell.copy(), priceA.copy(), priceB.isEmpty() ? ItemStack.EMPTY : priceB.copy()));
@@ -97,7 +102,7 @@ public final class TradeEditMenu extends ChestMenu {
         // Hand the samples back and clear the slots so close() doesn't return them twice.
         returnInputs();
         handedOff = true;
-        player.sendSystemMessage(styled("Trade added.", ChatFormatting.GREEN));
+        player.sendSystemMessage(styled(t("villagershop.trade.added", "Trade added."), ChatFormatting.GREEN));
         ShopSetupMenu.open(player, shop);
     }
 
