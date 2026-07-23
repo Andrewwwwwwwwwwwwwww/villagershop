@@ -32,3 +32,7 @@ Menus and messages are drawn by the **server**, per player, from the language th
 
 - **This server only:** drop the file at `<world>/villagershop/lang/<locale>.json` and restart.
 - **Bundle for everyone:** send finished translations to the author to be added to the jar.
+
+## Bundled translations
+
+- Traditional Chinese (`zh_tw`) — caprese502

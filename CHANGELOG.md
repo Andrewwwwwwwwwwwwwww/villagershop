@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.6] - 2026-07-22
+### Added
+- **Traditional Chinese (zh_tw) translation.** Thanks to caprese502 for the translation.
+
 ## [1.0.5] - 2026-07-21
 ### Added
 - **Full localization support.** Every player-facing string — the shop setup menu, the stock and collected-payment containers, the trade editor, and all `/shop` command messages — is now translatable. English is the built-in default; see `TRANSLATING.md`.
