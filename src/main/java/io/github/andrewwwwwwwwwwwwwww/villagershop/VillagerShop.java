@@ -19,6 +19,10 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class VillagerShop implements ModInitializer {
     public static final String MOD_ID = "villagershop";
     public static final Logger LOGGER = LoggerFactory.getLogger("VillagerShop");
@@ -26,6 +30,12 @@ public class VillagerShop implements ModInitializer {
     public static MinecraftServer server;
     public static final ShopManager MANAGER = new ShopManager();
     public static ShopConfig CONFIG = new ShopConfig();
+
+    // Debounce shop-villager interactions: a single right-click can reach the callback more than
+    // once (interact + interactAt, held button, client re-prediction), which reopened the menu
+    // repeatedly and looked like it opened "on hover". One open per player per window.
+    private static final long INTERACT_DEBOUNCE_MS = 350L;
+    private final Map<UUID, Long> lastInteract = new ConcurrentHashMap<>();
 
     @Override
     public void onInitialize() {
@@ -50,12 +60,21 @@ public class VillagerShop implements ModInitializer {
             Shop shop = MANAGER.get(entity.getUUID());
             if (shop == null) return InteractionResult.PASS;
 
-            if (isOwnerOrOp(sp, shop)) {
-                ShopSetupMenu.open(sp, shop);
-            } else {
-                ShopMerchant.open(sp, shop);
+            // Consume the interaction (suppress vanilla trading) but only actually open a menu once
+            // per debounce window, so a single click can't spam-open it.
+            long now = System.currentTimeMillis();
+            Long last = lastInteract.get(sp.getUUID());
+            if (last == null || now - last > INTERACT_DEBOUNCE_MS) {
+                lastInteract.put(sp.getUUID(), now);
+                if (isOwnerOrOp(sp, shop)) {
+                    ShopSetupMenu.open(sp, shop);
+                } else {
+                    ShopMerchant.open(sp, shop);
+                }
             }
-            return InteractionResult.SUCCESS; // consume; suppress vanilla villager trading
+            // CONSUME (not SUCCESS): no arm-swing / no client-side re-prediction of the interaction,
+            // which is what made it fire repeatedly as the crosshair sat on the villager.
+            return InteractionResult.CONSUME;
         });
 
         // Shop villagers are indestructible.

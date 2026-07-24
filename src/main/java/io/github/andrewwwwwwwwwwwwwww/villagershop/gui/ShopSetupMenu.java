@@ -115,6 +115,7 @@ public final class ShopSetupMenu extends ChestMenu {
         lore.add(styled(t(sales == 1 ? "villagershop.trade.instock_one" : "villagershop.trade.instock_many",
                 sales == 1 ? "In stock: %d (%d sale)" : "In stock: %d (%d sales)", available, sales),
                 sales > 0 ? ChatFormatting.GREEN : ChatFormatting.RED));
+        lore.add(styled(t("villagershop.trade.edit", "Left-click to edit the price"), ChatFormatting.YELLOW));
         lore.add(styled(t("villagershop.trade.delete", "Right-click to delete this trade"), ChatFormatting.RED));
         icon.set(DataComponents.LORE, new ItemLore(lore));
         return icon;
@@ -133,8 +134,10 @@ public final class ShopSetupMenu extends ChestMenu {
                 shop.trades.remove(slotId);
                 VillagerShop.MANAGER.save(shop);
                 removeArmed = false;
+                refresh();
+            } else { // left-click edits the price
+                TradePriceMenu.open(player, shop, slotId);
             }
-            refresh();
             return;
         }
 

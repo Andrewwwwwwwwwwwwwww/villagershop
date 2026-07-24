@@ -1,6 +1,21 @@
 # Changelog
 
-## [1.0.6] - 2026-07-22
+## [1.0.7] - 2026-07-24
+### Added
+- **Edit a trade's price.** Left-click a trade in the setup menu to open a price editor and adjust the
+  quantity of each price item with +/- buttons (left = 1, right = 8). No item juggling, so it can't
+  duplicate items. (To change the price item type, delete and re-add the trade.)
+### Fixed
+- **Shop villagers no longer re-open the trade GUI repeatedly.** A single right-click could reach the
+  interaction callback more than once (and while the crosshair rested on the villager), reopening the
+  menu so it looked like it opened "on hover." Interactions are now debounced and consumed cleanly.
+- **Finished localization.** The trade editor's slot labels ("Item to sell", "Price item 1/2",
+  "Confirm trade", "Cancel") were still hardcoded English; they now use the language files, with
+  matching en_us and zh_tw entries (plus keys for the new price editor).
+
+### Note
+- Owners open the **setup** menu (to manage), not the buy screen, so you can't buy from your own shop
+  — this is by design.
 ### Added
 - **Traditional Chinese (zh_tw) translation.** Thanks to caprese502 for the translation.
 

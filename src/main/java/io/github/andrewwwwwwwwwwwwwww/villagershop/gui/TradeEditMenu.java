@@ -62,11 +62,11 @@ public final class TradeEditMenu extends ChestMenu {
             if (i == SELL || i == PRICE_A || i == PRICE_B) continue;
             container.setItem(i, filler.copy());
         }
-        container.setItem(2, label(Items.CHEST, "Item to sell", ChatFormatting.AQUA));
-        container.setItem(4, label(Items.GOLD_INGOT, "Price item 1", ChatFormatting.AQUA));
-        container.setItem(6, label(Items.GOLD_NUGGET, "Price item 2 (optional)", ChatFormatting.AQUA));
-        container.setItem(CONFIRM, label(Items.EMERALD_BLOCK, "Confirm trade", ChatFormatting.GREEN));
-        container.setItem(CANCEL, label(Items.BARRIER, "Cancel", ChatFormatting.RED));
+        container.setItem(2, label(Items.CHEST, t("villagershop.trade.label.sell", "Item to sell"), ChatFormatting.AQUA));
+        container.setItem(4, label(Items.GOLD_INGOT, t("villagershop.trade.label.price1", "Price item 1"), ChatFormatting.AQUA));
+        container.setItem(6, label(Items.GOLD_NUGGET, t("villagershop.trade.label.price2", "Price item 2 (optional)"), ChatFormatting.AQUA));
+        container.setItem(CONFIRM, label(Items.EMERALD_BLOCK, t("villagershop.trade.confirm", "Confirm trade"), ChatFormatting.GREEN));
+        container.setItem(CANCEL, label(Items.BARRIER, t("villagershop.trade.cancel", "Cancel"), ChatFormatting.RED));
     }
 
     @Override

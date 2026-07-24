@@ -56,5 +56,21 @@
   "villagershop.trade.instock_one": "In stock: %d (%d sale)",
   "villagershop.trade.need_items": "Place an item to sell and at least one price item.",
   "villagershop.trade.new": "New Trade",
-  "villagershop.trade.price": "Price: %s"
+  "villagershop.trade.price": "Price: %s",
+  "villagershop.trade.edit": "Left-click to edit the price",
+  "villagershop.trade.label.sell": "Item to sell",
+  "villagershop.trade.label.price1": "Price item 1",
+  "villagershop.trade.label.price2": "Price item 2 (optional)",
+  "villagershop.trade.confirm": "Confirm trade",
+  "villagershop.trade.cancel": "Cancel",
+  "villagershop.price.title": "Edit Price",
+  "villagershop.price.selling": "Selling",
+  "villagershop.price.price1": "Price 1: %d",
+  "villagershop.price.price2": "Price 2: %d",
+  "villagershop.price.decrease": "Decrease",
+  "villagershop.price.increase": "Increase",
+  "villagershop.price.step": "Left: 1   Right: 8",
+  "villagershop.price.save": "Save",
+  "villagershop.price.back": "Back",
+  "villagershop.price.saved": "Price updated."
 }

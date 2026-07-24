@@ -56,5 +56,21 @@
   "villagershop.trade.instock_one": "庫存：%d（可販售 %d 次）",
   "villagershop.trade.need_items": "請放入至少一件要販售的商品與至少一種價格物品。",
   "villagershop.trade.new": "新交易",
-  "villagershop.trade.price": "價格：%s"
+  "villagershop.trade.price": "價格：%s",
+  "villagershop.trade.edit": "左鍵點擊以編輯價格",
+  "villagershop.trade.label.sell": "出售的物品",
+  "villagershop.trade.label.price1": "價格物品 1",
+  "villagershop.trade.label.price2": "價格物品 2（選填）",
+  "villagershop.trade.confirm": "確認交易",
+  "villagershop.trade.cancel": "取消",
+  "villagershop.price.title": "編輯價格",
+  "villagershop.price.selling": "出售中",
+  "villagershop.price.price1": "價格 1：%d",
+  "villagershop.price.price2": "價格 2：%d",
+  "villagershop.price.decrease": "減少",
+  "villagershop.price.increase": "增加",
+  "villagershop.price.step": "左鍵：1   右鍵：8",
+  "villagershop.price.save": "儲存",
+  "villagershop.price.back": "返回",
+  "villagershop.price.saved": "價格已更新。"
 }
