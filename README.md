@@ -1,6 +1,6 @@
 # Villager Shop
 
-A **server-side** Fabric mod for Minecraft 26.1.2 that lets players run player-owned shops
+A **server-side** Fabric mod for Minecraft 26.2 that lets players run player-owned shops
 backed by villagers. No client mod required.
 
 ## Concept
