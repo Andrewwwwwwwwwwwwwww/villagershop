@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.8] - 2026-07-24
+### Changed
+- **New mod icon** — replaced the placeholder with proper artwork (a villager shopkeeper with a "SHOP OPEN" sign).
+
 ## [1.0.7] - 2026-07-24
 ### Added
 - **Edit a trade's price.** Left-click a trade in the setup menu to open a price editor and adjust the
