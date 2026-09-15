@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.0] - 2026-09-15
+### Added
+- **Minecraft 26.3 build.** The mod now ships a build for Minecraft 26.3 (Fabric Loader 0.19.3 -> 0.19.5, Fabric API 0.152.1+26.2 -> 0.160.5+26.3). The 26.2 and 26.1.2 builds carry on alongside it.
+### Changed
+- Inventory placement and invulnerability calls use the 26.3 API on the 26.3 build.
+
 ## [1.0.8] - 2026-07-24
 ### Changed
 - **New mod icon** — replaced the placeholder with proper artwork (a villager shopkeeper with a "SHOP OPEN" sign).
