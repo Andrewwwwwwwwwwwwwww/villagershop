@@ -110,7 +110,7 @@ public final class TradeEditMenu extends ChestMenu {
         for (int slot : new int[]{SELL, PRICE_A, PRICE_B}) {
             ItemStack s = container.getItem(slot);
             if (!s.isEmpty()) {
-                player.getInventory().placeItemBackInInventory(s);
+                player.getInventory().placeItemBackInInventory(s, net.minecraft.util.Prediction.SERVER_ONLY);
                 container.setItem(slot, ItemStack.EMPTY);
             }
         }

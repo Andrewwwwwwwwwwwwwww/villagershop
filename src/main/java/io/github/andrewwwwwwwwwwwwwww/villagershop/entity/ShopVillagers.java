@@ -28,7 +28,7 @@ public final class ShopVillagers {
 
     /** Apply the protective/cosmetic settings. Safe to re-apply (e.g. after a reload). */
     public static void lockDown(Villager villager, String displayName) {
-        villager.setInvulnerable(true);
+        villager.setPermanentlyInvulnerable(true);
         villager.setSilent(true);
         villager.setNoAi(true);
         villager.setBaby(false);
