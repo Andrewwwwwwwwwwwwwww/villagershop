@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1] - 2026-09-17
+### Fixed
+- **Price editor buttons now update on screen.** Adjusting a trade's price with the Increase/Decrease
+  buttons changed and saved the price correctly, but the price item in the editor kept showing its
+  original count, so it looked like the buttons did nothing. The price item now shows the live count
+  as you adjust it.
+
 ## [1.1.0] - 2026-09-15
 ### Added
 - **Minecraft 26.3 build.** The mod now ships a build for Minecraft 26.3 (Fabric Loader 0.19.3 -> 0.19.5, Fabric API 0.152.1+26.2 -> 0.160.5+26.3). The 26.2 and 26.1.2 builds carry on alongside it.

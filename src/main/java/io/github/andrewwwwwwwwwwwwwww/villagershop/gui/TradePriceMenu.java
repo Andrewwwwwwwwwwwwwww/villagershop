@@ -78,14 +78,14 @@ public final class TradePriceMenu extends ChestMenu {
 
         container.setItem(PA_MINUS, button(Items.STAINED_GLASS_PANE.red(),
                 t("villagershop.price.decrease", "Decrease"), List.of(t("villagershop.price.step", "Left: 1   Right: 8"))));
-        container.setItem(PA_ICON, icon(trade.priceA, t("villagershop.price.price1", "Price 1: %d", aCount), List.of()));
+        container.setItem(PA_ICON, icon(trade.priceA.copyWithCount(aCount), t("villagershop.price.price1", "Price 1: %d", aCount), List.of()));
         container.setItem(PA_PLUS, button(Items.STAINED_GLASS_PANE.green(),
                 t("villagershop.price.increase", "Increase"), List.of(t("villagershop.price.step", "Left: 1   Right: 8"))));
 
         if (bCount > 0) {
             container.setItem(PB_MINUS, button(Items.STAINED_GLASS_PANE.red(),
                     t("villagershop.price.decrease", "Decrease"), List.of(t("villagershop.price.step", "Left: 1   Right: 8"))));
-            container.setItem(PB_ICON, icon(trade.priceB, t("villagershop.price.price2", "Price 2: %d", bCount), List.of()));
+            container.setItem(PB_ICON, icon(trade.priceB.copyWithCount(bCount), t("villagershop.price.price2", "Price 2: %d", bCount), List.of()));
             container.setItem(PB_PLUS, button(Items.STAINED_GLASS_PANE.green(),
                     t("villagershop.price.increase", "Increase"), List.of(t("villagershop.price.step", "Left: 1   Right: 8"))));
         }
